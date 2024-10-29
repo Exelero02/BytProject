@@ -14,7 +14,7 @@
 
         public void GiveExp(Player player)
         {
-            player.Exp += ExpReward;
+            player.AddExperience(ExpReward);
             Console.WriteLine($"{Name} was defeated! {player.Name} gained {ExpReward} experience.");
         }
 

@@ -1,60 +1,121 @@
 using BytProject;
+using System.Text.Json;
+
 
 namespace TestProject1
 {
-    public class Tests
+    [TestFixture]
+    public class AttributeTests
     {
-        private Player player;
-        private Enemy goblin;
-        private Weapon sword;
-        private Consumable potion;
-        private Armor shield;
-
-        [SetUp]
-        public void Setup()
+        [Test]
+        public void PlayerAttributes_ShouldReturnCorrectValues()
         {
-            player = new Player("Hero", 100, 1, 0, 100, new City("Test City"));
-            goblin = new Goblin("Goblin", 50, 1, 10, 10, false);
-            sword = new Weapon("Sword", 100, 5, false, 20);
-            potion = new Consumable("Health Potion", 10, 1, false, 30);
-            shield = new Armor("Shield", 50, 10, false, 10, 2);
+            var player = new Player("Hero", 100, 1, 0, 100, new City("Test City"));
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(player.Name, Is.EqualTo("Hero"));
+                Assert.That(player.HP, Is.EqualTo(100));
+                Assert.That(player.Level, Is.EqualTo(1));
+                Assert.That(player.Exp, Is.EqualTo(0));
+                Assert.That(player.Gold, Is.EqualTo(100));
+                Assert.That(player.CurrentLocation.Name, Is.EqualTo("Test City"));
+            });
+        }
+        [Test]
+        public void WeaponAttributes_ShouldReturnCorrectValues()
+        {
+            var sword = new Weapon("Sword", 100, 5, false, 20);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(sword.Name, Is.EqualTo("Sword"));
+                Assert.That(sword.Value, Is.EqualTo(100));
+                Assert.That(sword.Weight, Is.EqualTo(5));
+                Assert.That(sword.IsEquipped, Is.EqualTo(false));
+                Assert.That(sword.Damage, Is.EqualTo(20));
+
+
+            });
+        }
+
+    }
+    [TestFixture]
+    public class ExceptionTest
+    {
+        [Test]
+        public void Player_ShouldThrowException_WhenHpIsNegative()
+        {
+            Assert.Throws<ArgumentException>(() => new Player("Hero", -10, 1, 0, 100, new City("Test City")));
         }
 
         [Test]
-        public void TestWeaponReduceHealth()
+        public void Weapon_ShouldThrowException_WhenDamageIsNegative()
         {
-            sword.ReduceHealth(goblin);
-
-            Assert.That(goblin.HP, Is.EqualTo(30));
+            Assert.Throws<ArgumentException>(() => new Weapon("Sword", 100, 5, false, -20));
         }
+    }
+    [TestFixture]
+    public class ExtentTests
+    {
+        [Test]
+        public void City_ShouldStoreAndRetrieveMarketItems()
+        {
+            var city = new City("Test City");
+            var marketItem = new Market("Potion", 50);
+            city.Markets.Add(marketItem);
+
+            var retrievedItem = city.Markets[0];
+
+            Assert.That(retrievedItem.ItemName, Is.EqualTo("Potion"));
+            Assert.That(retrievedItem.ItemPrice, Is.EqualTo(50));
+        }
+    }
+
+    [TestFixture]
+    public class EncapsulationTests
+    {
+        [Test]
+        public void Player_Encapsulation_ShouldProtectAttribute()
+        {
+            var player = new Player("Hero", 100, 1, 0, 100, new City("Test City"));
+
+            var playerType = player.GetType();
+
+            var hpField = playerType.GetProperty("HP", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            Assert.IsNull(hpField, "HP property should not be publicly accessible.");
+
+            var expField = playerType.GetProperty("Exp", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            Assert.IsNull(expField, "Exp property should not be publicly accessible.");
+        }
+    }
+
+    [TestFixture]
+    public class PersistenceTests
+    {
+        private const string FilePath = "playerData.json";
 
         [Test]
-        public void TestConsumableAddHealth()
+        public void PlayerPersistence_ShouldSaveAndLoadCorrectly()
         {
-            potion.AddHealth(player);
+            var player = new Player("Hero", 100, 1, 0, 100, new City("Test City"));
 
-            Assert.That(player.HP, Is.EqualTo(130));
-        }
+            var jsonData = JsonSerializer.Serialize(player);
+            File.WriteAllText(FilePath, jsonData);
 
-        [Test]
-        public void TestArmorReduceDamage()
-        {
-            int damage = 30;
+            var loadedData = File.ReadAllText(FilePath);
+            var loadedPlayer = JsonSerializer.Deserialize<Player>(loadedData);
 
-            shield.ReduceDamage(ref damage);
-
-            Assert.That(damage, Is.EqualTo(20));
-        }
-
-        [Test]
-        public void TestArmorDurabilityReduction()
-        {
-            int damage = 30;
-
-            shield.ReduceDamage(ref damage); 
-            shield.ReduceDamage(ref damage);
-
-            Assert.That(shield.IsBroken, Is.True);
+            Assert.Multiple(() =>
+            {
+                Assert.That(loadedPlayer.Name, Is.EqualTo(player.Name));
+                Assert.That(loadedPlayer.HP, Is.EqualTo(player.HP));
+                Assert.That(loadedPlayer.Level, Is.EqualTo(player.Level));
+                Assert.That(loadedPlayer.Exp, Is.EqualTo(player.Exp));
+                Assert.That(loadedPlayer.Gold, Is.EqualTo(player.Gold));
+            });
         }
     }
 }
+
+

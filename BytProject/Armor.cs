@@ -1,18 +1,10 @@
 ﻿namespace BytProject
 {
-    public class Armor : Item
+    public class Armor(string name, int value, int weight, bool isEquipped, int defense, int durability) : Item(name, value, weight, isEquipped)
     {
-        public int Defense { get; private set; }
-        public int Durability { get; private set; }
-        public bool IsBroken { get; private set; }
-
-        public Armor(string name, int value, int weight, bool isEquipped, int defense, int durability)
-            : base(name, value, weight, isEquipped)
-        {
-            Defense = defense;
-            Durability = durability;
-            IsBroken = false;
-        }
+        public int Defense { get; private set; } = defense;
+        public int Durability { get; private set; } = durability;
+        public bool IsBroken { get; private set; } = false;
 
         public void ReduceDamage(ref int damage)
         {

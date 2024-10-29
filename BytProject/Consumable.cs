@@ -1,14 +1,8 @@
 ﻿namespace BytProject
 {
-    public class Consumable : Item
+    public class Consumable(string name, int value, int weight, bool isEquipped, int healthPoint) : Item(name, value, weight, isEquipped)
     {
-        public int HealthPoint { get; private set; }
-
-        public Consumable(string name, int value, int weight, bool isEquipped, int healthPoint)
-            : base(name, value, weight, isEquipped)
-        {
-            HealthPoint = healthPoint;
-        }
+        public int HealthPoint { get; private set; } = healthPoint;
 
         public void AddHealth(Player player)
         {

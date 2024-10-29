@@ -1,14 +1,9 @@
 ﻿namespace BytProject
 {
-    public class Goblin : Enemy
+    public class Goblin(string name, int hp, int level, int damage, int expReward, bool isAmbush) : Enemy(name, hp, level, damage, expReward)
     {
-        public bool IsAmbush { get; private set; }
+        public bool IsAmbush { get; private set; } = isAmbush;
 
-        public Goblin(string name, int hp, int level, int damage, int expReward, bool isAmbush)
-            : base(name, hp, level, damage, expReward)
-        {
-            IsAmbush = isAmbush;
-        }
         public void AddStealthBonus(Player player)
         {
             if (IsAmbush)

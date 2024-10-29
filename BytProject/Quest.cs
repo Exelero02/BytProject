@@ -1,24 +1,14 @@
 ﻿namespace BytProject
 {
 
-    public class Quest
+    public class Quest(string name, int reward, City location, Quest? sideQuest = null)
     {
-        public string Name { get; private set; }
-        public int Reward { get; private set; }
-        public bool IsActive { get; private set; }
-        public Quest SideQuest { get; private set; }
-        public bool IsCompleted { get; private set; }
-        public City Location { get; private set; }
-
-        public Quest(string name, int reward, City location, Quest sideQuest = null)
-        {
-            Name = name;
-            Reward = reward;
-            Location = location;
-            SideQuest = sideQuest;
-            IsActive = true;
-            IsCompleted = false;
-        }
+        public string Name { get; private set; } = name;
+        public int Reward { get; private set; } = reward;
+        public bool IsActive { get; private set; } = true;
+        public Quest? SideQuest { get; private set; } = sideQuest;
+        public bool IsCompleted { get; private set; } = false;
+        public City Location { get; private set; } = location;
 
         public void CompleteQuest()
         {

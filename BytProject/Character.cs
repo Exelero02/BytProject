@@ -1,14 +1,12 @@
-﻿
-
-namespace BytProject
+﻿namespace BytProject
 {
     public abstract class Character
     {
         public string Name { get; private set; }
-        public int HP { get; private set; }
-        public int Level { get; private set; }
+        public int HP { get; protected set; } // Allows derived classes to set HP
+        public int Level { get; protected set; } // Allows derived classes to set Level
         public bool Alive { get; private set; }
-        public const int MaxLevel = 10; 
+        public const int MaxLevel = 10;
 
         public Character(string name, int hp, int level)
         {
@@ -38,6 +36,4 @@ namespace BytProject
             }
         }
     }
-
-
 }
